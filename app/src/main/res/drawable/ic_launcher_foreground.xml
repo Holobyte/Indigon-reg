@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer stylized cinematic glowing ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3.5"
+        android:pathData="M 54,26 L 73.8,34.2 L 82,54 L 73.8,73.8 L 54,82 L 34.2,73.8 L 26,54 L 34.2,34.2 Z" />
+        
+    <!-- Main glowing neon purple/cyan play-triangle with AI spark inside -->
+    <path
+        android:fillColor="#8A2BE2"
+        android:pathData="M44,38 L72,54 L44,70 Z" />
+        
+    <!-- AI Spark star in the center left -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M 53,54 L 54.5,50.5 L 58,49 L 54.5,47.5 L 53,44 L 51.5,47.5 L 48,49 L 51.5,50.5 Z" />
+
+    <!-- A few circular accent dots representing digital particles -->
+    <path android:fillColor="#FFFFFF" android:pathData="M 34.2,34.2 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 73.8,34.2 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 73.8,73.8 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M 34.2,73.8 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+</vector>

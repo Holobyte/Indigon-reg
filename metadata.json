@@ -1,0 +1,6 @@
+{
+  "name": "Indigon AI Film Gauntlet",
+  "description": "Official Indigon AI Film Gauntlet app by Vollywood®: register for free training, explore AI film categories, presenters, sponsors, and VTC training pathways.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

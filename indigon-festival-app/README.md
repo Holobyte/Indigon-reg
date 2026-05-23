@@ -1,92 +1,120 @@
-# Indigon AI Film Gauntlet Web App Prototype
+# Indigon AI Film Gauntlet - Official Launch Version
 
-Indeed mobile-first, luxurious, responsive, and completely functional single-page Web application prototype for the **Indigon AI Film Gauntlet** (presented by **Vollywood®**). 
-
-This project matches the structural integrity of the companion **Android/Jetpack Compose Kotlin Application**, providing an elegant alternative layout designed to easily host on subdomains like `indigon.vollywood.org`.
+Welcome to the official launch version of the **Indigon AI Film Gauntlet** Web Application, presented by **Vollywood®**. This mobile-first, luxurious, and highly responsive single-page portal is optimized for immediate attendee recruitment and secure partner capture.
 
 ---
 
 ## 🚀 1. How to Run Locally
 
-You can spin up this web application locally in under 60 seconds.
+You can spin up the application locally in under 60 seconds.
 
 ### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed on your computer.
+Make sure you have [Node.js](https://nodejs.org/) installed.
 
 ### Installation
 1. Move into the project directory:
    ```bash
    cd indigon-festival-app
    ```
-2. Install all development dependencies configured in `package.json`:
+2. Install dependencies:
    ```bash
    npm install
    ```
-3. Start the high-performance Vite local development server:
+3. Run the Vite high-performance development server:
    ```bash
    npm run dev
    ```
-4. Open your browser and navigate to the local hosting url (typically `http://localhost:3000`).
+4. Open your browser to the local URL (typically `http://localhost:3000`).
 
 ---
 
-## 📁 2. Created File Directory Structure
-
-The structure has been designed following simple, highly modular layouts:
+## 📁 2. File Directory Structure
 
 ```text
 indigon-festival-app/
-├── package.json           # Vite, React, Lucide, and Tailwind CSS directives
-├── vite.config.js         # Port configurations & react plugin adapters
-├── postcss.config.js      # PostCSS parser setting
-├── tailwind.config.js     # Tailored Indigo/Volt color design tokens
-├── index.html             # Viewport initialization and template anchor page
-├── README.md              # Documentation manual
+├── package.json           # Vite, React 18, Lucide React, and Tailwind CSS configuration
+├── vite.config.js         # Port and React compilation adapters
+├── postcss.config.js      # PostCSS parser configuration
+├── tailwind.config.js     # Tailored Indigo/Volt cinematic color tokens
+├── index.html             # Main index template anchor page
+├── .env.example           # Environment variables blueprints
+├── .env                  # Live development configuration values
+├── README.md              # Technical and launch documentation
 └── src/
-    ├── index.css          # Tailwind base/component layout styles
-    ├── main.jsx           # Mounting react code to root element
-    ├── App.jsx            # Dynamic single-page navigation layout with forms and views
+    ├── index.css          # Tailwind base elements & component overrides
+    ├── main.jsx           # React bootstrapping entrypoint
+    ├── App.jsx            # Single-Page App with native history-state route router
     └── services/
-        └── api.js         # Reactive Data Local Engine with API Connection Blueprints
+        └── api.js         # Submissions dispatcher & Mailchimp payload adapters
 ```
 
 ---
 
-## 🗄️ 3. Registration Status & Local Storage State
+## 🗺️ 3. Configured Path Routes
 
-- **Current State Strategy:** This application is **100% Client-Side Persistent**. All successfully submitted forms (for registrations and sponsor inquiries) are written to and retrieved from browser-level **`localStorage`**. 
-- **Persistence:** This ensures that refreshing the web tab, navigating between sub-pages, or testing registrations will **never** lose your entries.
-- **Pre-Seeded Data:** On first runtime, the local engine seeds mock records so that testing the **Admin Dashboard** is high-fidelity and expressive immediately.
+This app leverages a high-fidelity native locationpathname reader. Direct entry, refresh, and popstate navigation are supported natively:
 
----
-
-## 🔐 4. Authorized Admin Access Panel
-
-An administrative viewing console has been implemented right inside the application topbar (represented by the **Lock icon**). 
-- **Default Password:** `admin` or `vollywood2026`.
-- **Features:** Allows checking real-time tables of registrations, tracking participant requirements (such as brought device, preferred AI categories, contact details), viewing custom sponsor tickets, and emptying session caches during iteration.
+- **Home (`/`)**: Main brand value deck, logistical status indicators, and CTA actions.
+- **Event Registration (`/register`)**: Captures free seating applications for the AI Media Training.
+- **Sponsor Inquiry (`/sponsors`)**: Highlights partner tiers, presenting catalogs, and hosts the sponsor lead form.
+- **VTC Pathway (`/vtc-path`)**: Summarizes digital-to-generative certification stages.
+- **Privacy Notice (`/privacy`)**: Renders the complete, transparent data-usage terms block.
+- **Secure Admin Portal (`/admin`)**: Restricted staffing operations console.
 
 ---
 
-## 🔌 5. Production Connection Blueprints (Future Backends)
+## 🔐 4. Secure Admin Gate & Password Guard
 
-The API service file `/src/services/api.js` has been explicitly designed with production-ready code comments acting as clear placeholders for standard integrations:
+The admin portal is strictly excluded from public indicators, headers, footers, or mobile layouts.
 
-### A. Migrating to Google Sheets (Free/Low Cost)
-You can append registrations instantly to a spreadsheet using a simple **Google Apps Script** endpoint:
-1. Open a Google Sheet and click **Extensions > Apps Script**.
-2. Paste a basic append Row doPost script.
-3. Deploy it as a **Web App** (accessible to "Anyone").
-4. Uncomment the App Script block inside `api.js` and paste your secure Script URL.
+### Authentication Pathways
+To unlock database dashboards, staff must authenticate via:
+1. **Password Key:** Matches the environment variable `VITE_ADMIN_PASSWORD` (defaults to `vollywood2026`).
+2. **Authorized Guest Email:** Instant authentication loop for approved administrator `tonyholobyte@gmail.com`.
 
-### B. Migrating to Firebase (Pro Database solution)
-To synchronize inputs directly with **Cloud Firestore**:
-1. Configure a Firebase project.
-2. Initialize Firebase Web SDK inside `api.js`.
-3. Swap `localStorage` calls with standard Firestore collection adding hooks (`addDoc`, `collection`).
+### Multi-Tab Database Reporting
+Once unlocked, the panel lists actionable metrics:
+- Attendance breakdown counts.
+- Segmented charts for Preferred AI Categories, Experience Levels, and Devices.
+- Filterable tables highlighting private Registrant details and Sponsor intent letters.
 
 ---
 
-## 🤝 6. Safe Git Branches Note (AI Studio Environment)
-As git terminal commands are strictly restricted inside our container build boundaries due to secure sandboxing, terminal execution of git branches cannot be run directly via code hooks. 
-However, **exporting this repository as a ZIP** or **using the Push to GitHub button** from the top controls inside AI Studio allows you to easily push this entire `indigon-festival-app` workspace directly to your `Holobyte/binaryleaf` branch `feature/indigon-festival-app` safely.
+## 🔌 5. Mailchimp Integration Setup & Envs
+
+This system contains pre-wired, dry-tested production adapters in `src/services/api.js`. It decouples browser processing from raw keys as a security requirement.
+
+### A. Environment Variables Required (.env)
+Define these secure keys in your serverless/hosting platform dashboard (Netlify, Vercel, or Firebase Functions env variables):
+
+```env
+# Staff Password Gateway (Client-accessible)
+VITE_ADMIN_PASSWORD=vollywood2026
+
+# Private Mailchimp API Secrets (Never checked into source files)
+MAILCHIMP_API_KEY=your_private_api_key_here
+MAILCHIMP_SERVER_PREFIX=us21
+MAILCHIMP_AUDIENCE_ID=your_audience_list_id_here
+```
+
+### B. Segment Tags Triggered
+Form structures append tags to trigger Mailchimp email automation:
+- **Event Signup Form** tags contacts as `Indigon Event Signup`.
+- **Sponsor Lead Form** tags contacts as `Indigon Sponsor Lead`.
+
+---
+
+## 🤝 6. Launch Git Branches Guideline
+
+Because terminal code branches inside sandboxed containers cannot execute terminal Git commands directly:
+1. Export this sandbox as a **ZIP** archive from the top dashboard, or click the **Push to GitHub** platform option.
+2. Initialize or push the code directly to your branch:
+
+```bash
+git checkout -b feature/official-indigon-launch
+git add indigon-festival-app/
+git commit -m "feat: upgrade indigon app to official launch version v1.0"
+git push origin feature/official-indigon-launch
+```
+
+> **Note:** Maintain the isolated directory scope inside the folder to avoid affecting other project directories or root settings.

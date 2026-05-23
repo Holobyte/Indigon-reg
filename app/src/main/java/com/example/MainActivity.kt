@@ -474,6 +474,67 @@ fun RowButtonBlock(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegistrationDropdown(
+    label: String,
+    value: String,
+    options: List<String>,
+    onSelect: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        OutlinedTextField(
+            readOnly = true,
+            value = value,
+            onValueChange = {},
+            label = { Text(label) },
+            trailingIcon = {
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    modifier = Modifier.clickable { expanded = !expanded }
+                )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = BrandColors.ElectricPurple,
+                unfocusedBorderColor = Color.LightGray
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp)
+        )
+        // Invisible overlay for capturing click across the entire TextField area reliably
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { expanded = !expanded }
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            options.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    onClick = {
+                        onSelect(item)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 
 // --------------------------------------------------
 // 2. REGISTRATION PAGE
@@ -503,11 +564,6 @@ fun RegistrationPage(viewModel: AppViewModel) {
     val isSubmitting by viewModel.isSubmitting.collectAsStateWithLifecycle()
     val success by viewModel.registrationSuccess.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
-
-    var attendingMenuExpanded by remember { mutableStateOf(false) }
-    var categoryMenuExpanded by remember { mutableStateOf(false) }
-    var experienceMenuExpanded by remember { mutableStateOf(false) }
-    var deviceMenuExpanded by remember { mutableStateOf(false) }
 
     val attendingList = listOf(
         "Filmmaker", "Content Creator", "Business Owner", "Student",
@@ -704,140 +760,36 @@ fun RegistrationPage(viewModel: AppViewModel) {
             )
 
             // Dropdown attending as
-            ExposedDropdownMenuBox(
-                expanded = attendingMenuExpanded,
-                onExpandedChange = { attendingMenuExpanded = !attendingMenuExpanded }
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = attendingAs,
-                    onValueChange = {},
-                    label = { Text("I am attending as") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = attendingMenuExpanded) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                ExposedDropdownMenu(
-                    expanded = attendingMenuExpanded,
-                    onDismissRequest = { attendingMenuExpanded = false }
-                ) {
-                    attendingList.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(item) },
-                            onClick = {
-                                viewModel.regAttendingAs.value = item
-                                attendingMenuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            RegistrationDropdown(
+                label = "I am attending as",
+                value = attendingAs,
+                options = attendingList,
+                onSelect = { viewModel.regAttendingAs.value = it }
+            )
 
             // Which AI media category interests you most?
-            ExposedDropdownMenuBox(
-                expanded = categoryMenuExpanded,
-                onExpandedChange = { categoryMenuExpanded = !categoryMenuExpanded }
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = categoryInterest,
-                    onValueChange = {},
-                    label = { Text("Which AI media category interests you most?") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryMenuExpanded) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                ExposedDropdownMenu(
-                    expanded = categoryMenuExpanded,
-                    onDismissRequest = { categoryMenuExpanded = false }
-                ) {
-                    categoryList.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(item) },
-                            onClick = {
-                                viewModel.regCategoryInterest.value = item
-                                categoryMenuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            RegistrationDropdown(
+                label = "Which AI media category interests you most?",
+                value = categoryInterest,
+                options = categoryList,
+                onSelect = { viewModel.regCategoryInterest.value = it }
+            )
 
             // Current AI experience level
-            ExposedDropdownMenuBox(
-                expanded = experienceMenuExpanded,
-                onExpandedChange = { experienceMenuExpanded = !experienceMenuExpanded }
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = experienceLevel,
-                    onValueChange = {},
-                    label = { Text("Current AI experience level") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = experienceMenuExpanded) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                ExposedDropdownMenu(
-                    expanded = experienceMenuExpanded,
-                    onDismissRequest = { experienceMenuExpanded = false }
-                ) {
-                    experienceList.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(item) },
-                            onClick = {
-                                viewModel.regExperienceLevel.value = item
-                                experienceMenuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            RegistrationDropdown(
+                label = "Current AI experience level",
+                value = experienceLevel,
+                options = experienceList,
+                onSelect = { viewModel.regExperienceLevel.value = it }
+            )
 
             // What device will you bring?
-            ExposedDropdownMenuBox(
-                expanded = deviceMenuExpanded,
-                onExpandedChange = { deviceMenuExpanded = !deviceMenuExpanded }
-            ) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = device,
-                    onValueChange = {},
-                    label = { Text("What device will you bring?") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = deviceMenuExpanded) },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                ExposedDropdownMenu(
-                    expanded = deviceMenuExpanded,
-                    onDismissRequest = { deviceMenuExpanded = false }
-                ) {
-                    deviceList.forEach { item ->
-                        DropdownMenuItem(
-                            text = { Text(item) },
-                            onClick = {
-                                viewModel.regDevice.value = item
-                                deviceMenuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
+            RegistrationDropdown(
+                label = "What device will you bring?",
+                value = device,
+                options = deviceList,
+                onSelect = { viewModel.regDevice.value = it }
+            )
 
             // Updates Option Row
             Text(

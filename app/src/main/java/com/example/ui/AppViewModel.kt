@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
@@ -66,10 +67,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         
         // Seed dummy initial values for testing the dashboard if none exist
         viewModelScope.launch {
-            repository.registrations.collectLatest { list ->
+            try {
+                val list = repository.registrations.first()
                 if (list.isEmpty()) {
                     seedDummyData()
                 }
+            } catch (e: Exception) {
+                // Ignore initial seeding query exceptions gracefully
             }
         }
     }

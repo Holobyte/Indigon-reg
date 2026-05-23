@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,6 +47,21 @@ class MainActivity : ComponentActivity() {
     private val viewModel: AppViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val oldHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            android.util.Log.e("MainActivityCrash", "CRASH DETECTED IN THREAD $thread", throwable)
+            try {
+                java.io.File("crash_log_root.txt").printWriter().use { writer ->
+                    throwable.printStackTrace(writer)
+                }
+            } catch (e: Exception) {}
+            try {
+                java.io.File("/app/crash_log.txt").printWriter().use { writer ->
+                    throwable.printStackTrace(writer)
+                }
+            } catch (e: Exception) {}
+            oldHandler?.uncaughtException(thread, throwable)
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -474,7 +490,6 @@ fun RowButtonBlock(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationDropdown(
     label: String,
@@ -489,42 +504,60 @@ fun RegistrationDropdown(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
-        OutlinedTextField(
-            readOnly = true,
-            value = value,
-            onValueChange = {},
-            label = { Text(label) },
-            trailingIcon = {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded },
+            shape = RoundedCornerShape(10.dp),
+            border = BorderStroke(1.dp, Color.LightGray),
+            color = Color.White
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = label,
+                        fontSize = 11.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = value,
+                        fontSize = 15.sp,
+                        color = BrandColors.MidnightIndigo,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                     contentDescription = null,
-                    modifier = Modifier.clickable { expanded = !expanded }
+                    tint = BrandColors.MidnightIndigo,
+                    modifier = Modifier.size(24.dp)
                 )
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = BrandColors.ElectricPurple,
-                unfocusedBorderColor = Color.LightGray
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp)
-        )
-        // Invisible overlay for capturing click across the entire TextField area reliably
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { expanded = !expanded }
-        )
+            }
+        }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .fillMaxWidth()
                 .background(Color.White)
         ) {
             options.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(item) },
+                    text = { 
+                        Text(
+                            text = item,
+                            color = BrandColors.MidnightIndigo,
+                            fontSize = 14.sp
+                        ) 
+                    },
                     onClick = {
                         onSelect(item)
                         expanded = false
@@ -823,7 +856,7 @@ fun RegistrationPage(viewModel: AppViewModel) {
                 )
             }
 
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             // OPTIONAL SECTION
             Text(
@@ -892,7 +925,7 @@ fun RegistrationPage(viewModel: AppViewModel) {
                 }
             }
 
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
             // CONSENT CHECKBOX
             Row(
@@ -998,28 +1031,28 @@ fun EventDetailsPage(viewModel: AppViewModel) {
                     value = "June 27, 2026",
                     color = BrandColors.ElectricPurple
                 )
-                Divider(modifier = Modifier.padding(vertical = 12.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                 DetailItem(
                     icon = Icons.Default.Schedule,
                     label = "Time",
                     value = "10:00 AM - 4:00 PM EST",
                     color = BrandColors.ElectricPurple
                 )
-                Divider(modifier = Modifier.padding(vertical = 12.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                 DetailItem(
                     icon = Icons.Default.Place,
                     label = "Location",
                     value = "Vollywood Training Center, 1200 Creative Media Way, Richmond, VA",
                     color = BrandColors.ElectricPurple
                 )
-                Divider(modifier = Modifier.padding(vertical = 12.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                 DetailItem(
                     icon = Icons.Default.AttachMoney,
                     label = "Cost",
                     value = "Free to Attend",
                     color = Color(0xFF16A34A)
                 )
-                Divider(modifier = Modifier.padding(vertical = 12.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                 DetailItem(
                     icon = Icons.Default.AirlineSeatReclineNormal,
                     label = "Seats",
@@ -1380,9 +1413,9 @@ fun PresentersPage(viewModel: AppViewModel) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 FuturePresenterRow(label = "Guest Presenter", highlight = "To Be Announced")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 FuturePresenterRow(label = "Sponsor Presenter", highlight = "Brand Expert")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 FuturePresenterRow(label = "Community Partner", highlight = "Local Creative Guild")
             }
         }
@@ -1593,13 +1626,13 @@ fun SponsorPage(viewModel: AppViewModel) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 PlaceholdersRow(label = "Presenting Sponsor", status = "Available Slot")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 PlaceholdersRow(label = "Category Sponsor", status = "Active Reservation")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 PlaceholdersRow(label = "Community Partner", status = "Available Slot")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 PlaceholdersRow(label = "Technology Partner", status = "Available Slot")
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 PlaceholdersRow(label = "Media Partner", status = "Active Area")
             }
         }

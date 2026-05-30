@@ -144,18 +144,7 @@ fun MainScreen(viewModel: AppViewModel) {
                         }
                     }
                 },
-                actions = {
-                    IconButton(
-                        onClick = { viewModel.navigateTo(AppViewModel.Screen.AdminDashboard) },
-                        modifier = Modifier.testTag("nav_admin_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AdminPanelSettings,
-                            contentDescription = "Admin Area",
-                            tint = BrandColors.MidnightIndigo
-                        )
-                    }
-                },
+                actions = {},
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White,
                     titleContentColor = BrandColors.MidnightIndigo
@@ -1042,7 +1031,7 @@ fun EventDetailsPage(viewModel: AppViewModel) {
                 DetailItem(
                     icon = Icons.Default.Place,
                     label = "Location",
-                    value = "Vollywood Training Center, 1200 Creative Media Way, Richmond, VA",
+                    value = "[Add Confirmed Location]",
                     color = BrandColors.ElectricPurple
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
@@ -1670,7 +1659,7 @@ fun SponsorPage(viewModel: AppViewModel) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Success! Your inquiry has been sent. Check the Admin Dashboard to verify.",
+                            text = "Thank you for your interest in sponsoring Indigon. Your inquiry has been received, and the Vollywood® / Indigon team will follow up with sponsorship details.",
                             color = Color(0xFF166534),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
@@ -1945,6 +1934,132 @@ data class PathStep(val num: String, val title: String, val desc: String)
 // --------------------------------------------------
 @Composable
 fun AdminDashboardPage(viewModel: AppViewModel) {
+    var isAuthenticated by remember { mutableStateOf(false) }
+
+    if (!isAuthenticated) {
+        AdminLoginPage(onSuccess = { isAuthenticated = true })
+    } else {
+        AdminDashboardContent(viewModel)
+    }
+}
+
+@Composable
+fun AdminLoginPage(onSuccess: () -> Unit) {
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Use BuildConfig.ADMIN_PASSWORD if available, otherwise TEMP_ADMIN_PASSWORD
+    val correctPassword = try {
+        BuildConfig.ADMIN_PASSWORD
+    } catch (e: Throwable) {
+        // TODO: This must move to env/secrets before production
+        val TEMP_ADMIN_PASSWORD = "change-me-indigon-admin"
+        TEMP_ADMIN_PASSWORD
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 420.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(BrandColors.LightGrayBg),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Admin Security",
+                        tint = BrandColors.ElectricPurple,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Admin Access Restrained",
+                    fontWeight = FontWeight.Black,
+                    fontSize = 20.sp,
+                    color = BrandColors.MidnightIndigo
+                )
+
+                Text(
+                    text = "Please enter the administrative password to view registered attendees and inquiries.",
+                    fontSize = 13.sp,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
+                )
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage ?: "",
+                        color = Color.Red,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { 
+                        password = it
+                        errorMessage = null 
+                    },
+                    label = { Text("Admin Password") },
+                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
+                    ),
+                    modifier = Modifier.fillMaxWidth().testTag("admin_password_input"),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        if (password == correctPassword) {
+                            onSuccess()
+                        } else {
+                            errorMessage = "Invalid password. Access denied."
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = BrandColors.ElectricPurple),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .testTag("admin_login_submit_button")
+                ) {
+                    Text("Authenticate", fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AdminDashboardContent(viewModel: AppViewModel) {
     val registrations by viewModel.registrationsList.collectAsStateWithLifecycle()
     val inquiries by viewModel.sponsorInquiriesList.collectAsStateWithLifecycle()
 

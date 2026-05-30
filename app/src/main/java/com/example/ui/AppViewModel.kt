@@ -64,62 +64,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 _sponsorInquiriesList.value = list
             }
         }
-        
-        // Seed dummy initial values for testing the dashboard if none exist
-        viewModelScope.launch {
-            try {
-                val list = repository.registrations.first()
-                if (list.isEmpty()) {
-                    seedDummyData()
-                }
-            } catch (e: Exception) {
-                // Ignore initial seeding query exceptions gracefully
-            }
-        }
-    }
-
-    private suspend fun seedDummyData() {
-        val demo1 = Registration(
-            fullName = "Alex Chen",
-            emailAddress = "alex.chen@example.com",
-            phoneNumber = "+1-555-0199",
-            cityState = "Richmond, VA",
-            attendingAs = "Filmmaker",
-            categoryInterest = "AI Movie Trailers",
-            experienceLevel = "Intermediate",
-            deviceToBring = "Laptop",
-            receiveUpdates = true,
-            businessOrgName = "Hyperion Films",
-            websiteSocialLink = "hyperionfilms.co",
-            hopeToLearn = "How to generate high fidelity trailer sequences using Runway and Midjourney.",
-            considerFutureChallenges = "Yes"
-        )
-        val demo2 = Registration(
-            fullName = "Sarah Jenkins",
-            emailAddress = "sarah.j@example.com",
-            phoneNumber = "+1-555-0142",
-            cityState = "Virginia Beach, VA",
-            attendingAs = "Content Creator",
-            categoryInterest = "AI Commercials / Ads",
-            experienceLevel = "Beginner",
-            deviceToBring = "Tablet",
-            receiveUpdates = true,
-            businessOrgName = "Sarah Media Group",
-            websiteSocialLink = "instagram.com/sarahcreate",
-            hopeToLearn = "Practical automation workflows for short-form video ads.",
-            considerFutureChallenges = "Maybe"
-        )
-        repository.insertRegistration(demo1)
-        repository.insertRegistration(demo2)
-
-        val inquiry1 = SponsorInquiry(
-            fullName = "Victoria Vance",
-            companyOrg = "Vance Tech Lab",
-            email = "victoria@vancetech.io",
-            phone = "+1-555-8888",
-            interests = "Interested in sponsoring the Technology Partner category and showcasing local tech tools."
-        )
-        repository.insertSponsorInquiry(inquiry1)
     }
 
     // Registration Form Fields State
@@ -212,6 +156,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     considerFutureChallenges = regConsiderChallenges.value
                 )
                 repository.insertRegistration(newReg)
+                
+                // TODO: Future Mailchimp Integration Placeholder
+                // For security, official form submissions should later go through a secure backend or serverless function 
+                // before sending to Mailchimp (do not put real Mailchimp API keys in public client-side Android code).
+                // Once integrated, this form submission should add the contact to Mailchimp with the tag: "Indigon Event Signup".
+                
                 _registrationSuccess.value = true
             } catch (e: Exception) {
                 _errorMessage.value = "An error occurred: ${e.localizedMessage}"
@@ -278,6 +228,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     interests = spInterests.value.trim()
                 )
                 repository.insertSponsorInquiry(newInquiry)
+                
+                // TODO: Future Mailchimp Integration Placeholder
+                // For security, official form submissions should later go through a secure backend or serverless function 
+                // before sending to Mailchimp (do not put real Mailchimp API keys in public client-side Android code).
+                // Once integrated, this form submission should add the contact to Mailchimp with the tag: "Indigon Sponsor Lead".
+                
                 _sponsorSuccess.value = true
             } catch (e: Exception) {
                 _sponsorError.value = "Error sending inquiry: ${e.localizedMessage}"
